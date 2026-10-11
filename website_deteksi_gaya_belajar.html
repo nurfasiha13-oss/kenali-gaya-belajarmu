@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kenali Gaya Belajarmu | BK</title>
+<style>
+:root{--ink:#243447;--muted:#667085;--bg:#f5f7fb;--card:#fff;--blue:#4867d6;--teal:#2b9a91;--line:#e4e8f0;--soft:#edf1ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:linear-gradient(120deg,#3449a8,#5879e8);color:white;padding:25px 20px}header .wrap,main{max-width:980px;margin:auto}header h1{margin:0;font-size:clamp(1.5rem,4vw,2.1rem)}header p{margin:6px 0 0;opacity:.92}
+main{padding:24px 16px 50px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,4vw,28px);box-shadow:0 5px 22px #2434470a;margin-bottom:18px}
+h2{margin:0 0 10px;font-size:1.35rem}h3{margin:0 0 8px}.muted{color:var(--muted)}.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1;min-width:200px}
+label{display:block;font-weight:650;margin:12px 0 6px}input,select{width:100%;padding:12px 13px;border:1px solid #cfd6e4;border-radius:10px;font:inherit;background:white;color:var(--ink)}
+button,.btn{border:0;border-radius:11px;background:var(--blue);color:white;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+button:hover,.btn:hover{filter:brightness(.96)}button.secondary{background:#e9edfb;color:#3449a8}button.ghost{background:#eef2f6;color:#344054}button.danger{background:#a43f52}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.hidden{display:none!important}.progress{height:8px;background:#e8ecf4;border-radius:9px;overflow:hidden;margin:15px 0}.progress div{height:100%;background:var(--teal);width:0;transition:width .2s}
+.q{border:1px solid var(--line);border-radius:13px;padding:16px;margin:13px 0}.q p{margin:0 0 10px;font-weight:650}.options{display:grid;gap:8px}.opt{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:400}.opt:has(input:checked){border-color:var(--blue);background:var(--soft)}.opt input{width:auto;margin-top:5px}
+.pills{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:6px 10px;border-radius:99px;background:#edf1ff;color:#3449a8;font-size:.9rem;font-weight:700}
+.resultgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.score{background:#f8f9fc;border:1px solid var(--line);border-radius:14px;padding:15px}.score strong{font-size:1.5rem;display:block}.bar{height:9px;background:#e5e9f1;border-radius:9px;margin-top:8px;overflow:hidden}.bar span{display:block;height:100%;background:var(--teal)}
+.notice{background:#fff8e7;border:1px solid #f1dca3;padding:12px 14px;border-radius:12px;color:#765b1d}.good{background:#eaf8f3;border:1px solid #b8e4d3;padding:14px;border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:.94rem}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f6f7fb} .tablewrap{overflow:auto}
+.small{font-size:.88rem}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px}
+@media(max-width:600px){.resultgrid{grid-template-columns:1fr}.card{border-radius:14px}header{padding:22px 16px}th,td{padding:8px}}
+@media print{header,.no-print,footer{display:none!important}body{background:white}.card{box-shadow:none;break-inside:avoid}main{max-width:none;padding:0}.hidden{display:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>Kenali Gaya Belajarmu</h1><p>Refleksi sederhana untuk mengenali cara belajar yang terasa paling membantu.</p></div></header>
+<main>
+<section id="home" class="card">
+<h2>Halo, teman belajar! 👋</h2>
+<p class="muted">Isi identitas, lalu jawab pertanyaan berdasarkan kebiasaanmu. Tidak ada jawaban benar atau salah.</p>
+<div class="row"><div><label for="studentName">Nama siswa</label><input id="studentName" maxlength="100" placeholder="Tulis nama lengkapmu"></div><div><label for="studentClass">Kelas</label><input id="studentClass" maxlength="30" placeholder="Contoh: VIII A"></div></div>
+<div class="notice small" style="margin-top:15px">Hasil ini merupakan gambaran awal untuk refleksi, bukan diagnosis atau label tetap. Kamu bisa menggunakan beberapa cara belajar sekaligus.</div>
+<div class="actions"><button onclick="startQuiz()">Mulai menjawab →</button><button class="secondary" onclick="showTeacherLogin()">Akses Guru BK</button></div>
+</section>
+<section id="quizSection" class="card hidden">
+<div class="sectionhead"><h2>Pertanyaan gaya belajar</h2><span id="counter" class="pill">0/15</span></div>
+<p class="muted">Pilih satu jawaban yang paling menggambarkan dirimu pada setiap pertanyaan.</p><div class="progress"><div id="progressBar"></div></div>
+<div id="questions"></div>
+<div class="actions"><button class="secondary" onclick="backHome()">← Kembali</button><button onclick="submitQuiz()">Lihat hasil saya</button></div>
+</section>
+<section id="resultSection" class="card hidden">
+<h2>Hasil refleksi gaya belajarmu</h2><p id="studentSummary" class="muted"></p><div id="resultContent"></div>
+<div class="good"><strong>Ingat:</strong> hasil ini bukan batas kemampuanmu. Cobalah menggabungkan membaca gambar/catatan, berdiskusi atau mendengarkan penjelasan, dan praktik langsung sesuai materi.</div>
+<div class="actions no-print"><button onclick="window.print()">Cetak / Simpan PDF</button><button class="secondary" onclick="backHome()">Selesai</button></div>
+</section>
+<section id="teacherLogin" class="card hidden">
+<h2>Akses Guru BK</h2><p class="muted">Masukkan kata sandi untuk melihat rekap respons pada perangkat ini atau database yang sudah dikonfigurasi.</p>
+<label for="teacherPassword">Kata sandi</label><input id="teacherPassword" type="password" placeholder="Kata sandi Guru BK" autocomplete="current-password">
+<div class="actions"><button onclick="loginTeacher()">Masuk</button><button class="ghost" onclick="backHome()">Kembali</button></div><p id="loginError" class="small" style="color:#a43f52"></p>
+</section>
+<section id="teacherPanel" class="card hidden">
+<div class="sectionhead"><div><h2>Dashboard Guru BK</h2><p class="muted small">Rekap hasil deteksi gaya belajar siswa.</p></div><button class="ghost no-print" onclick="logoutTeacher()">Keluar</button></div>
+<div id="storageNotice" class="notice small"></div>
+<div class="actions no-print"><button onclick="exportCSV()">Unduh Sheet (CSV)</button><button class="secondary" onclick="exportWord()">Unduh Word</button><button class="secondary" onclick="exportPDF()">Unduh PDF</button><button class="ghost" onclick="refreshRecords()">Muat ulang data</button></div>
+<div class="row no-print" style="margin:18px 0"><div><label for="classFilter">Filter kelas</label><select id="classFilter" onchange="renderRecords()"><option value="">Semua kelas</option></select></div><div><label for="searchStudent">Cari siswa</label><input id="searchStudent" placeholder="Nama siswa..." oninput="renderRecords()"></div></div>
+<div id="recordSummary" class="pills" style="margin:12px 0"></div>
+<div class="tablewrap"><table><thead><tr><th>Nama</th><th>Kelas</th><th>Tanggal</th><th>Visual</th><th>Auditori</th><th>Kinestetik</th><th>Hasil utama</th><th class="no-print">Detail</th></tr></thead><tbody id="recordsBody"></tbody></table></div>
+<div id="recordDetail" class="card hidden" style="margin-top:18px"></div>
+<div class="notice small" style="margin-top:16px"><strong>Privasi:</strong> gunakan data untuk pendampingan, batasi akses, dan jangan menjadikan hasil sebagai satu-satunya dasar keputusan pembelajaran.</div>
+</section>
+</main><footer>Materi refleksi gaya belajar untuk layanan Bimbingan dan Konseling</footer>
+<script>
+const PASS='gurubk234';
+// For cross-device shared records, connect a Firebase Realtime Database and paste its web config below.
+// Until configured, this demo saves records only in this browser/device (localStorage).
+const FIREBASE_CONFIG = null; // Replace null with your Firebase web config object to enable cloud sync.
+let db=null, records=[], currentResult=null, loggedIn=false;
+const qs=[
+['Saat mempelajari materi baru, saya lebih mudah memahami jika…',[['visual','Melihat gambar, diagram, atau contoh tertulis'],['auditori','Mendengarkan penjelasan orang lain'],['kinestetik','Mencoba atau mempraktikkan langsung']]],
+['Ketika mengingat informasi, saya biasanya…',[['visual','Mengingat bentuk, warna, atau letak tulisan'],['auditori','Mengingat suara atau ucapan'],['kinestetik','Mengingat kegiatan yang saya lakukan']]],
+['Saat guru menjelaskan, saya terbantu ketika…',[['visual','Ada tulisan, bagan, atau tayangan'],['auditori','Penjelasan lisan disampaikan dengan jelas'],['kinestetik','Ada demonstrasi atau kesempatan mencoba']]],
+['Saya paling suka bahan belajar berupa…',[['visual','Peta konsep, gambar, dan catatan berwarna'],['auditori','Rekaman penjelasan atau diskusi'],['kinestetik','Alat peraga dan aktivitas praktik']]],
+['Ketika menghafal sesuatu, saya cenderung…',[['visual','Membaca ulang atau membayangkan tulisan'],['auditori','Mengucapkan atau mendengarnya berulang kali'],['kinestetik','Menulis sambil bergerak atau menggunakan gerakan']]],
+['Jika harus memahami petunjuk, saya lebih nyaman…',[['visual','Membaca langkah-langkah tertulis'],['auditori','Mendengarkan orang menjelaskannya'],['kinestetik','Langsung mencoba langkahnya']]],
+['Dalam kerja kelompok, saya senang…',[['visual','Membuat catatan, poster, atau diagram'],['auditori','Bertukar ide dan mendiskusikan jawaban'],['kinestetik','Menyusun benda, membuat model, atau praktik']]],
+['Saat belajar mandiri, saya sering…',[['visual','Membuat rangkuman dan menandai bagian penting'],['auditori','Membaca dengan suara atau menjelaskan kepada diri sendiri'],['kinestetik','Belajar sambil melakukan aktivitas atau latihan soal']]],
+['Saya lebih mudah memahami perbedaan konsep jika…',[['visual','Melihat tabel atau perbandingan visual'],['auditori','Mendengar penjelasan dan contoh lisan'],['kinestetik','Mencoba contoh atau simulasi']]],
+['Ketika mengingat arah atau lokasi, saya cenderung…',[['visual','Mengingat peta atau tampilan tempat'],['auditori','Mengingat arahan yang diucapkan'],['kinestetik','Mengingat jalan yang pernah saya lalui']]],
+['Aktivitas kelas yang paling menarik bagi saya adalah…',[['visual','Mengamati infografik atau presentasi'],['auditori','Debat, cerita, atau tanya jawab'],['kinestetik','Eksperimen, permainan, atau proyek praktik']]],
+['Ketika menghadapi materi yang sulit, saya biasanya…',[['visual','Menggambar skema atau melihat contoh'],['auditori','Bertanya dan membicarakannya dengan orang lain'],['kinestetik','Mengerjakan contoh secara langsung']]],
+['Saya lebih mudah mengikuti pelajaran jika…',[['visual','Informasi disusun rapi dan mudah dilihat'],['auditori','Saya bisa mendengar dan mengulang penjelasan'],['kinestetik','Ada jeda untuk latihan atau bergerak']]],
+['Untuk mempersiapkan presentasi, saya lebih suka…',[['visual','Menyusun slide atau kartu berisi kata kunci'],['auditori','Berlatih mengucapkan materi dengan suara'],['kinestetik','Berlatih sambil bergerak atau mendemonstrasikan']]],
+['Setelah pelajaran selesai, yang paling membantu saya adalah…',[['visual','Melihat kembali catatan atau ilustrasi'],['auditori','Mendiskusikan atau menceritakan kembali materi'],['kinestetik','Mengerjakan latihan atau menerapkan materi']]]
+];
+const labels={visual:'Visual',auditori:'Auditori',kinestetik:'Kinestetik'};
+function show(id){['home','quizSection','resultSection','teacherLogin','teacherPanel'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));}
+function startQuiz(){if(!document.getElementById('studentName').value.trim()||!document.getElementById('studentClass').value.trim()){alert('Mohon isi nama dan kelas terlebih dahulu.');return;}renderQuestions();show('quizSection');window.scrollTo(0,0);}
+function renderQuestions(){document.getElementById('questions').innerHTML=qs.map((q,i)=>`<div class="q"><p>${i+1}. ${q[0]}</p><div class="options">${q[1].map((o,j)=>`<label class="opt"><input type="radio" name="q${i}" value="${o[0]}" onchange="updateProgress()"> <span>${o[1]}</span></label>`).join('')}</div></div>`).join('');updateProgress();}
+function updateProgress(){let n=qs.filter((_,i)=>document.querySelector(`input[name=q${i}]:checked`)).length;document.getElementById('counter').textContent=`${n}/${qs.length}`;document.getElementById('progressBar').style.width=(n/qs.length*100)+'%';}
+function submitQuiz(){let answers=qs.map((_,i)=>document.querySelector(`input[name=q${i}]:checked`)?.value);if(answers.some(x=>!x)){alert('Masih ada pertanyaan yang belum dijawab. Silakan periksa kembali.');return;}
+let scores={visual:0,auditori:0,kinestetik:0};answers.forEach(a=>scores[a]++);let max=Math.max(...Object.values(scores));let top=Object.keys(scores).filter(k=>scores[k]===max);
+currentResult={id:Date.now().toString(),name:document.getElementById('studentName').value.trim(),className:document.getElementById('studentClass').value.trim(),date:new Date().toISOString(),scores,top,answers};
+document.getElementById('studentSummary').textContent=`${currentResult.name} • Kelas ${currentResult.className}`;
+document.getElementById('resultContent').innerHTML=`<div class="resultgrid">${Object.keys(scores).map(k=>`<div class="score"><span>${labels[k]}</span><strong>${scores[k]} / 15</strong><div class="bar"><span style="width:${scores[k]/15*100}%"></span></div><p class="small muted">${Math.round(scores[k]/15*100)}% jawaban</p></div>`).join('')}</div><h3>${top.length===1?'Kecenderungan yang paling menonjol:':'Kecenderungan yang sama kuat:'} ${top.map(k=>labels[k]).join(' + ')}</h3><p>${top.length>1?'Skor tertinggi sama pada beberapa kategori. Kamu mungkin terbantu oleh gabungan cara-cara belajar berikut.':explain(top[0])}</p><p class="muted small">Skor menunjukkan pilihan pada kuesioner singkat ini, bukan kemampuan atau kecerdasan. Semua siswa dapat belajar melalui berbagai cara.</p>`;
+saveRecord(currentResult).then(()=>{show('resultSection');window.scrollTo(0,0);});
+}
+function explain(k){return {visual:'Kamu cukup sering memilih cara belajar yang melibatkan tampilan, gambar, diagram, catatan, atau susunan informasi yang mudah dilihat.',auditori:'Kamu cukup sering memilih cara belajar melalui penjelasan lisan, mendengarkan, berbicara, atau berdiskusi.',kinestetik:'Kamu cukup sering memilih cara belajar melalui praktik, mencoba langsung, simulasi, gerakan, atau latihan.'}[k];}
+function backHome(){show('home');window.scrollTo(0,0);}
+function showTeacherLogin(){document.getElementById('loginError').textContent='';document.getElementById('teacherPassword').value='';show('teacherLogin');}
+async function loginTeacher(){if(document.getElementById('teacherPassword').value!==PASS){document.getElementById('loginError').textContent='Kata sandi tidak sesuai.';return;}loggedIn=true;await refreshRecords();show('teacherPanel');window.scrollTo(0,0);}
+function logoutTeacher(){loggedIn=false;show('home');}
+function localRecords(){try{return JSON.parse(localStorage.getItem('gayaBelajarRecords')||'[]')}catch(e){return []}}
+async function saveRecord(r){if(db){try{await db.ref('responses/'+r.id).set(r);return}catch(e){console.error(e)}}let arr=localRecords();arr.push(r);localStorage.setItem('gayaBelajarRecords',JSON.stringify(arr));}
+async function refreshRecords(){if(!loggedIn)return;records=localRecords();let cloud=false;if(db){try{let snap=await db.ref('responses').once('value');records=Object.values(snap.val()||{});cloud=true}catch(e){console.error(e)}}document.getElementById('storageNotice').textContent=cloud?'Mode cloud aktif: data dimuat dari Firebase Realtime Database.':'Mode perangkat lokal: data hanya tersedia di browser/perangkat ini. Untuk rekap lintas perangkat, konfigurasi Firebase diperlukan.';let classes=[...new Set(records.map(r=>r.className))].sort();let sel=document.getElementById('classFilter'),old=sel.value;sel.innerHTML='<option value="">Semua kelas</option>'+classes.map(c=>`<option>${esc(c)}</option>`).join('');sel.value=classes.includes(old)?old:'';renderRecords();}
+function renderRecords(){if(!loggedIn)return;let cl=document.getElementById('classFilter').value,search=(document.getElementById('searchStudent').value||'').toLowerCase();let data=records.filter(r=>(!cl||r.className===cl)&&r.name.toLowerCase().includes(search));document.getElementById('recordSummary').innerHTML=`<span class="pill">Jumlah siswa: ${data.length}</span>`+Object.keys(labels).map(k=>{let n=data.filter(r=>r.top?.includes(k)).length;return `<span class="pill">${labels[k]} utama: ${n}</span>`}).join('');document.getElementById('recordsBody').innerHTML=data.length?data.sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.className)}</td><td>${new Date(r.date).toLocaleDateString('id-ID')}</td><td>${r.scores.visual}</td><td>${r.scores.auditori}</td><td>${r.scores.kinestetik}</td><td>${r.top.map(k=>labels[k]).join(' + ')}</td><td class="no-print"><button class="secondary" onclick="showDetail('${r.id}')">Lihat</button></td></tr>`).join(''):'<tr><td colspan="8" class="muted">Belum ada data yang cocok.</td></tr>';document.getElementById('recordDetail').classList.add('hidden');}
+function showDetail(id){let r=records.find(x=>x.id===id);if(!r)return;let d=document.getElementById('recordDetail');d.classList.remove('hidden');d.innerHTML=`<h3>Detail: ${esc(r.name)} — ${esc(r.className)}</h3><p class="muted small">${new Date(r.date).toLocaleString('id-ID')}</p><p><strong>Hasil utama:</strong> ${r.top.map(k=>labels[k]).join(' + ')}</p><div class="resultgrid">${Object.keys(labels).map(k=>`<div class="score">${labels[k]}<strong>${r.scores[k]}/15</strong></div>`).join('')}</div><h3>Jawaban per pertanyaan</h3><ol>${r.answers.map((a,i)=>`<li>${esc(qs[i][0])} — <strong>${labels[a]}</strong></li>`).join('')}</ol><button class="secondary no-print" onclick="document.getElementById('recordDetail').classList.add('hidden')">Tutup detail</button>`;d.scrollIntoView({behavior:'smooth',block:'start'});}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function filteredRecords(){let cl=document.getElementById('classFilter').value,search=(document.getElementById('searchStudent').value||'').toLowerCase();return records.filter(r=>(!cl||r.className===cl)&&r.name.toLowerCase().includes(search));}
+function exportCSV(){let data=filteredRecords();let head=['Nama','Kelas','Tanggal','Visual','Auditori','Kinestetik','Hasil utama',...qs.map((q,i)=>`P${i+1}`)];let rows=data.map(r=>[r.name,r.className,new Date(r.date).toLocaleString('id-ID'),r.scores.visual,r.scores.auditori,r.scores.kinestetik,r.top.map(k=>labels[k]).join(' + '),...r.answers.map(a=>labels[a])]);download('\ufeff'+[head,...rows].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n'),'rekap_gaya_belajar.csv','text/csv;charset=utf-8');}
+function download(content,name,type){let blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);}
+function exportWord(){let data=filteredRecords();let body=data.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.className)}</td><td>${new Date(r.date).toLocaleDateString('id-ID')}</td><td>${r.scores.visual}</td><td>${r.scores.auditori}</td><td>${r.scores.kinestetik}</td><td>${r.top.map(k=>labels[k]).join(' + ')}</td></tr>`).join('');let doc=`<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:Arial}table{border-collapse:collapse;width:100%}td,th{border:1px solid #888;padding:6px}th{background:#eee}</style></head><body><h1>Rekap Deteksi Gaya Belajar Siswa</h1><p>Diekspor: ${new Date().toLocaleString('id-ID')}</p><table><tr><th>Nama</th><th>Kelas</th><th>Tanggal</th><th>Visual</th><th>Auditori</th><th>Kinestetik</th><th>Hasil utama</th></tr>${body}</table><p>Catatan: hasil adalah refleksi awal, bukan diagnosis atau label tetap.</p></body></html>`;download(doc,'rekap_gaya_belajar.doc','application/msword');}
+function exportPDF(){let data=filteredRecords();let w=window.open('','_blank');if(!w){alert('Izinkan pop-up untuk membuat PDF.');return;}w.document.write(`<html><head><title>Rekap Gaya Belajar</title><style>body{font:12px Arial;padding:20px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #777;padding:6px;text-align:left}th{background:#eee}</style></head><body><h1>Rekap Deteksi Gaya Belajar Siswa</h1><p>Diekspor: ${new Date().toLocaleString('id-ID')}</p><table><tr><th>Nama</th><th>Kelas</th><th>Tanggal</th><th>Visual</th><th>Auditori</th><th>Kinestetik</th><th>Hasil utama</th></tr>${data.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.className)}</td><td>${new Date(r.date).toLocaleDateString('id-ID')}</td><td>${r.scores.visual}</td><td>${r.scores.auditori}</td><td>${r.scores.kinestetik}</td><td>${r.top.map(k=>labels[k]).join(' + ')}</td></tr>`).join('')}</table><p>Catatan: hasil adalah refleksi awal, bukan diagnosis atau label tetap.</p><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close();}
+function initFirebase(){if(!FIREBASE_CONFIG)return;let s=document.createElement('script');s.src='https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js';s.onload=()=>{let d=document.createElement('script');d.src='https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js';d.onload=()=>{try{firebase.initializeApp(FIREBASE_CONFIG);db=firebase.database();}catch(e){console.error('Firebase setup error',e)}};document.head.appendChild(d)};document.head.appendChild(s);}
+initFirebase();
+</script>
+</body></html>
